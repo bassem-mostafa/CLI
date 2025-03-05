@@ -1,0 +1,12 @@
+[submodule "port/Windows"]
+	path = port/Windows
+	url = https://github.com/bassem-mostafa/CLI_Windows.git
+[submodule "port/Fares_PCB_Arduino_MEGA2560"]
+	path = port/Fares_PCB_Arduino_MEGA2560
+	url = https://github.com/bassem-mostafa/CLI_Fares_PCB_Arduino_MEGA2560.git
+[submodule "port/Stub"]
+	path = port/Stub
+	url = https://github.com/bassem-mostafa/CLI_Stub.git
+[submodule "port/Flow_Meter"]
+	path = port/Flow_Meter
+	url = https://github.com/bassem-mostafa/CLI_Flow_Meter.git
