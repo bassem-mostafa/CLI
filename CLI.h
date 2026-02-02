@@ -75,7 +75,7 @@ extern "C"
         CLI_Status_t ( *Execute )( int argc, char ** argv );
 
         // Managed Internally
-        CLI_Command_Context_t * Context; // FIXME
+        CLI_Command_Context_t * Context;
     } CLI_Command_t;
 
     typedef uint8_t CLI_Data_t;
@@ -86,15 +86,15 @@ extern "C"
     // #### Public Method(s) #######################################################
     // #############################################################################
 
-    CLI_Status_t CLI_Initialize( void );
-    CLI_Status_t CLI_Cycle( void );
-    CLI_Status_t CLI_DeInitialize( void );
+    CLI_Status_t CLI_Initialize( CLI_t CLIx );
+    CLI_Status_t CLI_Cycle( CLI_t CLIx );
+    CLI_Status_t CLI_DeInitialize( CLI_t CLIx );
 
-    CLI_Status_t CLI_Add( CLI_t CLI, CLI_Command_t * CLI_Command_Root, CLI_Command_t * CLI_Command_Child );
-    CLI_Status_t CLI_Remove( CLI_t CLI, CLI_Command_t * CLI_Command );
-    CLI_Status_t CLI_List( CLI_t CLI, CLI_Command_t * CLI_Command );
+    CLI_Status_t CLI_Add( CLI_t CLIx, CLI_Command_t * Command_Root, CLI_Command_t * Command_Child );
+    CLI_Status_t CLI_Remove( CLI_t CLIx, CLI_Command_t * Command );
+    CLI_Status_t CLI_List( CLI_t CLIx, CLI_Command_t * Command );
 
-    CLI_Status_t CLI_Write( CLI_t CLI, CLI_Data_t * CLI_Data, CLI_DataLength_t CLI_DataLength );
+    CLI_Status_t CLI_Write( CLI_t CLIx, CLI_Data_t * Data, CLI_DataLength_t DataLength );
 
     // #############################################################################
     // #### Public Variable(s) #####################################################

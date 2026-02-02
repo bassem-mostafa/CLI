@@ -59,17 +59,24 @@
 // #### Private Type(s) ########################################################
 // #############################################################################
 
+typedef struct CLI_Context
+{
+    CLI_Instance_t Instance[ CLI_Count ];
+} CLI_Context_t;
+
 // #############################################################################
 // #### Private Method(s) Prototype ############################################
 // #############################################################################
 
 static CLI_Status_t CLI_Context_Initialize( void );
-static CLI_Status_t CLI_Context_DeInitialize( void );
 static CLI_Status_t CLI_Context_Cycle( void );
+static CLI_Status_t CLI_Context_DeInitialize( void );
 
 // #############################################################################
 // #### Private Variable(s) ####################################################
 // #############################################################################
+
+static CLI_Context_t CLI_Context;
 
 // #############################################################################
 // #### Private Method(s) ######################################################
@@ -77,191 +84,266 @@ static CLI_Status_t CLI_Context_Cycle( void );
 
 static CLI_Status_t CLI_Context_Initialize( void )
 {
-    CLI_Status_t CLI_Status = CLI_Status_Error;
-    do
-    {
-        CLI_Trace( "%s( void )", __FUNCTION__ );
-        for ( CLI_t CLI = CLI_1; CLI < CLI_NUMBER_OF_INSTANCES; ++CLI )
-        {
-            CLI_Context.Instance[ CLI ].CLI = CLI;
-            if ( ( CLI_Status = CLI_Instance_Initialize( &CLI_Context.Instance[ CLI ] ) ) != CLI_Status_Success )
-            {
-                CLI_Warning( "CLI_%d Initialize Failed: Status %d", CLI, CLI_Status );
-            }
-        }
-        CLI_Status = CLI_Status_Success;
-    }
-    while ( 0 );
-    return CLI_Status;
-}
+    CLI_Status_t Status = CLI_Status_Success;
 
-static CLI_Status_t CLI_Context_DeInitialize( void )
-{
-    CLI_Status_t CLI_Status = CLI_Status_Error;
     do
     {
         CLI_Trace( "%s( void )", __FUNCTION__ );
-        for ( CLI_t CLI = CLI_1; CLI < CLI_NUMBER_OF_INSTANCES; ++CLI )
+
+        for ( CLI_t CLI_x = CLI_1; CLI_x < CLI_Count; ++CLI_x )
         {
-            if ( ( CLI_Status = CLI_Instance_DeInitialize( &CLI_Context.Instance[ CLI ] ) ) != CLI_Status_Success )
-            {
-                CLI_Warning( "CLI_%d DeInitialize Failed: Status %d", CLI, CLI_Status );
-            }
+            CLI_Context.Instance[ CLI_x ].CLIx = CLI_x;
         }
-        CLI_Status = CLI_Status_Success;
     }
     while ( 0 );
-    return CLI_Status;
+
+    return Status;
 }
 
 static CLI_Status_t CLI_Context_Cycle( void )
 {
-    CLI_Status_t CLI_Status = CLI_Status_Error;
+    CLI_Status_t Status = CLI_Status_Success;
+
     do
     {
         CLI_Trace( "%s( void )", __FUNCTION__ );
-        for ( CLI_t CLI = CLI_1; CLI < CLI_NUMBER_OF_INSTANCES; ++CLI )
-        {
-            if ( ( CLI_Status = CLI_Instance_Cycle( &CLI_Context.Instance[ CLI ] ) ) != CLI_Status_Success )
-            {
-                CLI_Warning( "CLI_%d Cycle Failed: Status %d", CLI, CLI_Status );
-            }
-        }
-        CLI_Status = CLI_Status_Success;
     }
     while ( 0 );
-    return CLI_Status;
+
+    return Status;
+}
+
+static CLI_Status_t CLI_Context_DeInitialize( void )
+{
+    CLI_Status_t Status = CLI_Status_Success;
+
+    do
+    {
+        CLI_Trace( "%s( void )", __FUNCTION__ );
+    }
+    while ( 0 );
+
+    return Status;
 }
 
 // #############################################################################
 // #### Public Method(s) #######################################################
 // #############################################################################
 
-CLI_Status_t CLI_Initialize( void )
+CLI_Status_t CLI_Initialize( CLI_t CLIx )
 {
-    CLI_Status_t CLI_Status = CLI_Status_Error;
+    CLI_Status_t Status = CLI_Status_Success;
+    CLI_Status_t CLI_Status = CLI_Status_Success;
+
     do
     {
-        CLI_Trace( "%s( void )", __FUNCTION__ );
-        CLI_Status = CLI_Context_Initialize( );
+        CLI_Trace( "%s( CLIx=%d )", __FUNCTION__, CLIx );
+
+        if ( ( Status = CLI_IsValid( CLIx ) ) != CLI_Status_Success )
+        {
+            break;
+        }
+
+        if ( ( Status = CLI_Context_Initialize( ) ) != CLI_Status_Success )
+        {
+            break;
+        }
+
+        for ( CLI_t CLI_x = CLI_Null; CLI_x < CLI_Count; ++CLI_x )
+        {
+            if ( CLIx != CLI_All && CLIx != CLI_x )
+            {
+                continue;
+            }
+
+            if ( ( CLI_Status = CLI_Instance_Initialize( &CLI_Context.Instance[ CLI_x ] ) ) != CLI_Status_Success )
+            {
+                Status = CLI_Status;
+            }
+        }
     }
     while ( 0 );
-    return CLI_Status;
+
+    return Status;
 }
 
-CLI_Status_t CLI_Cycle( void )
+CLI_Status_t CLI_Cycle( CLI_t CLIx )
 {
-    CLI_Status_t CLI_Status = CLI_Status_Error;
+    CLI_Status_t Status = CLI_Status_Success;
+    CLI_Status_t CLI_Status = CLI_Status_Success;
+
     do
     {
-        CLI_Trace( "%s( void )", __FUNCTION__ );
-        CLI_Status = CLI_Context_Cycle( );
+        CLI_Trace( "%s( CLIx=%d )", __FUNCTION__, CLIx );
+
+        if ( ( Status = CLI_IsValid( CLIx ) ) != CLI_Status_Success )
+        {
+            break;
+        }
+
+        if ( ( Status = CLI_Context_Cycle( ) ) != CLI_Status_Success )
+        {
+            break;
+        }
+
+        for ( CLI_t CLI_x = CLI_Null; CLI_x < CLI_Count; ++CLI_x )
+        {
+            if ( CLIx != CLI_All && CLIx != CLI_x )
+            {
+                continue;
+            }
+
+            if ( ( CLI_Status = CLI_Instance_Cycle( &CLI_Context.Instance[ CLI_x ] ) ) != CLI_Status_Success )
+            {
+                Status = CLI_Status;
+            }
+        }
     }
     while ( 0 );
-    return CLI_Status;
+
+    return Status;
 }
 
-CLI_Status_t CLI_DeInitialize( void )
+CLI_Status_t CLI_DeInitialize( CLI_t CLIx )
 {
-    CLI_Status_t CLI_Status = CLI_Status_Error;
+    CLI_Status_t Status = CLI_Status_Success;
+    CLI_Status_t CLI_Status = CLI_Status_Success;
+
     do
     {
-        CLI_Trace( "%s( void )", __FUNCTION__ );
-        CLI_Status = CLI_Context_DeInitialize( );
+        CLI_Trace( "%s( CLIx=%d )", __FUNCTION__, CLIx );
+
+        if ( ( Status = CLI_IsValid( CLIx ) ) != CLI_Status_Success )
+        {
+            break;
+        }
+
+        for ( CLI_t CLI_x = CLI_Null; CLI_x < CLI_Count; ++CLI_x )
+        {
+            if ( CLIx != CLI_All && CLIx != CLI_x )
+            {
+                continue;
+            }
+
+            if ( ( CLI_Status = CLI_Instance_DeInitialize( &CLI_Context.Instance[ CLI_x ] ) ) != CLI_Status_Success )
+            {
+                Status = CLI_Status;
+            }
+        }
+
+        if ( ( Status = CLI_Context_DeInitialize( ) ) != CLI_Status_Success )
+        {
+            break;
+        }
     }
     while ( 0 );
-    return CLI_Status;
+
+    return Status;
 }
 
-CLI_Status_t CLI_Add( CLI_t CLI, CLI_Command_t * CLI_Command_Root, CLI_Command_t * CLI_Command_Child )
+CLI_Status_t CLI_Add( CLI_t CLIx, CLI_Command_t * Command_Root, CLI_Command_t * Command_Child )
 {
-    CLI_Status_t CLI_Status = CLI_Status_Error;
+    CLI_Status_t Status = CLI_Status_Success;
+
     do
     {
-        CLI_Trace( "%s( CLI=CLI_%d, Root=%p, Child=%p )", __FUNCTION__, CLI, CLI_Command_Root, CLI_Command_Child );
-        if ( CLI_Command_Child == NULL )
+        CLI_Trace( "%s( CLIx=%d, Root=%p, Child=%p )", __FUNCTION__, CLIx, Command_Root, Command_Child );
+
+        if ( Command_Child == NULL )
         {
-            CLI_Status = CLI_Status_ArgumentInvalid;
+            Status = CLI_Status_ArgumentInvalid;
             break;
         }
-        if ( ( CLI_Status = CLI_IsValid( CLI ) ) != CLI_Status_Success )
+
+        if ( ( Status = CLI_IsValid( CLIx ) ) != CLI_Status_Success )
         {
             break;
         }
-        CLI_Instance_t * CLI_Instance = &CLI_Context.Instance[ CLI ];
-        CLI_Status = CLI_Instance_Add( CLI_Instance, CLI_Command_Root, CLI_Command_Child );
+
+        Status = CLI_Instance_Add( &CLI_Context.Instance[ CLIx ], Command_Root, Command_Child );
     }
     while ( 0 );
-    return CLI_Status;
+
+    return Status;
 }
 
-CLI_Status_t CLI_Remove( CLI_t CLI, CLI_Command_t * CLI_Command )
+CLI_Status_t CLI_Remove( CLI_t CLIx, CLI_Command_t * Command )
 {
-    CLI_Status_t CLI_Status = CLI_Status_Error;
+    CLI_Status_t Status = CLI_Status_Success;
+
     do
     {
-        CLI_Trace( "%s( CLI=CLI_%d, Command=%p )", __FUNCTION__, CLI, CLI_Command );
-        if ( CLI_Command == NULL )
+        CLI_Trace( "%s( CLIx=%d, Command=%p )", __FUNCTION__, CLIx, Command );
+
+        if ( Command == NULL )
         {
-            CLI_Status = CLI_Status_ArgumentInvalid;
+            Status = CLI_Status_ArgumentInvalid;
             break;
         }
-        if ( ( CLI_Status = CLI_IsValid( CLI ) ) != CLI_Status_Success )
+
+        if ( ( Status = CLI_IsValid( CLIx ) ) != CLI_Status_Success )
         {
             break;
         }
-        CLI_Instance_t * CLI_Instance = &CLI_Context.Instance[ CLI ];
-        CLI_Status = CLI_Instance_Remove( CLI_Instance, CLI_Command );
+
+        Status = CLI_Instance_Remove( &CLI_Context.Instance[ CLIx ], Command );
     }
     while ( 0 );
-    return CLI_Status;
+
+    return Status;
 }
 
-CLI_Status_t CLI_List( CLI_t CLI, CLI_Command_t * CLI_Command )
+CLI_Status_t CLI_List( CLI_t CLIx, CLI_Command_t * Command )
 {
-    CLI_Status_t CLI_Status = CLI_Status_Error;
+    CLI_Status_t Status = CLI_Status_Success;
+
     do
     {
-        CLI_Trace( "%s( CLI=CLI_%d, Command=%p )", __FUNCTION__, CLI, CLI_Command );
-        if ( ( CLI_Status = CLI_IsValid( CLI ) ) != CLI_Status_Success )
+        CLI_Trace( "%s( CLIx=%d, Command=%p )", __FUNCTION__, CLIx, Command );
+
+        if ( ( Status = CLI_IsValid( CLIx ) ) != CLI_Status_Success )
         {
             break;
         }
-        CLI_Instance_t * CLI_Instance = &CLI_Context.Instance[ CLI ];
-        CLI_Status = CLI_Instance_List( CLI_Instance, CLI_Command );
+
+        Status = CLI_Instance_List( &CLI_Context.Instance[ CLIx ], Command );
     }
     while ( 0 );
-    return CLI_Status;
+
+    return Status;
 }
 
-CLI_Status_t CLI_Write( CLI_t CLI, CLI_Data_t * CLI_Data, CLI_DataLength_t CLI_DataLength )
+CLI_Status_t CLI_Write( CLI_t CLIx, CLI_Data_t * Data, CLI_DataLength_t DataLength )
 {
-    CLI_Status_t CLI_Status = CLI_Status_Error;
+    CLI_Status_t Status = CLI_Status_Success;
+
     do
     {
-        CLI_Trace( "%s( CLI=CLI_%d, Data=%p, Length=%d )", __FUNCTION__, CLI, CLI_Data, CLI_DataLength );
-        if ( CLI_Data == NULL
-             || CLI_DataLength < 1 )
+        CLI_Trace( "%s( CLIx=%d, Data=%p, Length=%d )", __FUNCTION__, CLIx, Data, DataLength );
+
+        if ( Data == NULL || DataLength < 1 )
         {
-            CLI_Status = CLI_Status_ArgumentInvalid;
+            Status = CLI_Status_ArgumentInvalid;
             break;
         }
-        if ( ( CLI_Status = CLI_IsValid( CLI ) ) != CLI_Status_Success )
+
+        if ( ( Status = CLI_IsValid( CLIx ) ) != CLI_Status_Success )
         {
             break;
         }
-        CLI_Instance_t * CLI_Instance = &CLI_Context.Instance[ CLI ];
-        CLI_Status = CLI_Instance_Write( CLI_Instance, CLI_Data, CLI_DataLength );
+
+        Status = CLI_Instance_Write( &CLI_Context.Instance[ CLIx ], Data, DataLength );
     }
     while ( 0 );
-    return CLI_Status;
+
+    return Status;
 }
 
 // #############################################################################
 // #### Public Variable(s) #####################################################
 // #############################################################################
 
-const char CLI_VERSION[] = "0.0.0.v20260117-1036";
+const char CLI_VERSION[] = "0.0.0.v20260202-1914";
 
 // #############################################################################
 // #### File Guard #############################################################
