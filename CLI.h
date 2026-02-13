@@ -22,6 +22,12 @@
 // #### Description ############################################################
 // #############################################################################
 
+/**
+ *  @file
+ *
+ *  @brief Platform CLI Service
+ */
+
 // #############################################################################
 // #### Control Include(s) #####################################################
 // #############################################################################
@@ -33,6 +39,20 @@
 // #############################################################################
 // #### File Guard #############################################################
 // #############################################################################
+
+/**
+ *  @addtogroup Platform_Service
+ *
+ *  @{
+ */
+
+/**
+ *  @defgroup Platform_CLI CLI
+ *
+ *  @note Default port is STUB if Unspecified
+ *
+ *  @{
+ */
 
 #ifndef CLI_H_
     #define CLI_H_
@@ -56,18 +76,33 @@ extern "C"
     // #### Public Type(s) #########################################################
     // #############################################################################
 
+    /**
+     *  @brief CLI Operation Status
+     *
+     *  @enum CLI_Status_t
+     */
     typedef enum CLI_Status
     {
         CLI_Status_Success = 0,
         CLI_Status_ArgumentInvalid,
-        CLI_Status_Not_Supported,
+        CLI_Status_NotSupported,
         CLI_Status_Error,
         CLI_Status_Busy,
         CLI_Status_Timeout,
     } CLI_Status_t;
 
+    /**
+     *  @brief CLI Command Context
+     *
+     *  @struct CLI_Command_Context_t
+     */
     typedef struct CLI_Command_Context CLI_Command_Context_t;
 
+    /**
+     *  @brief CLI Command
+     *
+     *  @struct CLI_Command_t
+     */
     typedef struct CLI_Command
     {
         const char * Name;
@@ -78,28 +113,99 @@ extern "C"
         CLI_Command_Context_t * Context;
     } CLI_Command_t;
 
+    /**
+     *  @brief CLI Data
+     */
     typedef uint8_t CLI_Data_t;
 
+    /**
+     *  @brief CLI Data Length
+     */
     typedef uint32_t CLI_DataLength_t;
 
     // #############################################################################
     // #### Public Method(s) #######################################################
     // #############################################################################
 
+    /**
+     *  @brief Initialize command line interface
+     *
+     *  @note MUST BE called before using any CLI API
+     *
+     *  @param[in] CLIx Interface
+     *
+     *  @return CLI_Status_t
+     */
     CLI_Status_t CLI_Initialize( CLI_t CLIx );
+
+    /**
+     *  @brief Cycle command line interface
+     *
+     *  @param[in] CLIx Interface
+     *
+     *  @return CLI_Status_t
+     */
     CLI_Status_t CLI_Cycle( CLI_t CLIx );
+
+    /**
+     *  @brief DeInitialize command line interface
+     *
+     *  @param[in] CLIx Interface
+     *
+     *  @return CLI_Status_t
+     */
     CLI_Status_t CLI_DeInitialize( CLI_t CLIx );
 
-    CLI_Status_t CLI_Add( CLI_t CLIx, CLI_Command_t * Command_Root, CLI_Command_t * Command_Child );
+    /**
+     *  @brief Add command to command line interface
+     *
+     *  @param[in]     CLIx        Interface
+     *  @param[in,out] Command     Command
+     *                             Could be either NULL or an existing command
+     *  @param[in]     Command_Sub Sub-Command to be added to the main command
+     *
+     *  @return CLI_Status_t
+     */
+    CLI_Status_t CLI_Add( CLI_t CLIx, CLI_Command_t * Command, CLI_Command_t * Command_Sub );
+
+    /**
+     *  @brief Remove command from command line interface
+     *
+     *  @param[in] CLIx     Interface
+     *  @param[in] Command  Command instance
+     *
+     *  @return CLI_Status_t
+     */
     CLI_Status_t CLI_Remove( CLI_t CLIx, CLI_Command_t * Command );
+
+    /**
+     *  @brief List commands exists in command line interface
+     *
+     *  @param[in] CLIx     Interface
+     *  @param[in] Command  Command instance to start from
+     *
+     *  @return CLI_Status_t
+     */
     CLI_Status_t CLI_List( CLI_t CLIx, CLI_Command_t * Command );
 
+    /**
+     *  @brief Write data to command line interface
+     *
+     *  @param[in] CLIx       Interface
+     *  @param[in] Data       Data to be written
+     *  @param[in] DataLength Data length
+     *
+     *  @return CLI_Status_t
+     */
     CLI_Status_t CLI_Write( CLI_t CLIx, CLI_Data_t * Data, CLI_DataLength_t DataLength );
 
     // #############################################################################
     // #### Public Variable(s) #####################################################
     // #############################################################################
 
+    /**
+     *  @brief Version
+     */
     extern const char CLI_VERSION[];
 
     // #############################################################################
@@ -111,6 +217,12 @@ extern "C"
     #endif /* __cplusplus */
 
 #endif /* CLI_H_ */
+
+/**
+ *  @}
+ *
+ *  @}
+ */
 
 // #############################################################################
 // #### END OF FILE ############################################################

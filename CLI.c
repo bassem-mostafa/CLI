@@ -241,15 +241,15 @@ CLI_Status_t CLI_DeInitialize( CLI_t CLIx )
     return Status;
 }
 
-CLI_Status_t CLI_Add( CLI_t CLIx, CLI_Command_t * Command_Root, CLI_Command_t * Command_Child )
+CLI_Status_t CLI_Add( CLI_t CLIx, CLI_Command_t * Command, CLI_Command_t * Command_Sub )
 {
     CLI_Status_t Status = CLI_Status_Success;
 
     do
     {
-        CLI_Trace( "%s( CLIx=%d, Root=%p, Child=%p )", __FUNCTION__, CLIx, Command_Root, Command_Child );
+        CLI_Trace( "%s( CLIx=%d, Root=%p, Child=%p )", __FUNCTION__, CLIx, Command, Command_Sub );
 
-        if ( Command_Child == NULL )
+        if ( Command_Sub == NULL )
         {
             Status = CLI_Status_ArgumentInvalid;
             break;
@@ -260,7 +260,7 @@ CLI_Status_t CLI_Add( CLI_t CLIx, CLI_Command_t * Command_Root, CLI_Command_t * 
             break;
         }
 
-        Status = CLI_Instance_Add( &CLI_Context.Instance[ CLIx ], Command_Root, Command_Child );
+        Status = CLI_Instance_Add( &CLI_Context.Instance[ CLIx ], Command, Command_Sub );
     }
     while ( 0 );
 
@@ -343,7 +343,7 @@ CLI_Status_t CLI_Write( CLI_t CLIx, CLI_Data_t * Data, CLI_DataLength_t DataLeng
 // #### Public Variable(s) #####################################################
 // #############################################################################
 
-const char CLI_VERSION[] = "0.0.0.v20260212-2141";
+const char CLI_VERSION[] = "0.0.0.v20260213-1224";
 
 // #############################################################################
 // #### File Guard #############################################################
