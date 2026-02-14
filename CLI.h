@@ -83,12 +83,12 @@ extern "C"
      */
     typedef enum CLI_Status
     {
-        CLI_Status_Success = 0,
-        CLI_Status_ArgumentInvalid,
-        CLI_Status_NotSupported,
-        CLI_Status_Error,
-        CLI_Status_Busy,
-        CLI_Status_Timeout,
+        CLI_Status_Success = 0,     ///< Success
+        CLI_Status_ArgumentInvalid, ///< Argument Invalid
+        CLI_Status_NotSupported,    ///< Not Supported
+        CLI_Status_Error,           ///< General Error
+        CLI_Status_Busy,            ///< Busy
+        CLI_Status_Timeout,         ///< Timeout
     } CLI_Status_t;
 
     /**
@@ -105,8 +105,24 @@ extern "C"
      */
     typedef struct CLI_Command
     {
+        /**
+         * @brief Name of executable
+         */
         const char * Name;
+
+        /**
+         * @brief Help description
+         */
         const char * Help;
+
+        /**
+         * @brief Execute callback
+         *
+         * @param[in] argc Number of provided arguments
+         * @param[in] argv Values of provided arguments
+         *
+         * @return CLI_Status_t
+         */
         CLI_Status_t ( *Execute )( int argc, char ** argv );
 
         // Managed Internally
