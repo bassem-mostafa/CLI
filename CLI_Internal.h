@@ -89,7 +89,7 @@ extern "C"
     // #### Public Type(s) #########################################################
     // #############################################################################
 
-    typedef struct CLI_Instance_Context CLI_Instance_Context_t;
+    typedef struct CLI_InstanceContext CLI_InstanceContext_t;
 
     typedef struct CLI_Instance
     {
@@ -97,7 +97,7 @@ extern "C"
 
         union
         {
-            CLI_Instance_Context_t * Context;
+            CLI_InstanceContext_t * Context;
         };
     } CLI_Instance_t;
 
