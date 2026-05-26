@@ -68,6 +68,8 @@ extern "C"
 
     #include "CLI_Port.h"
 
+    #include <stdint.h>
+
     // #############################################################################
     // #### Public Macro(s) ########################################################
     // #############################################################################
@@ -92,11 +94,11 @@ extern "C"
     } CLI_Status_t;
 
     /**
-     *  @brief CLI Command Context
+     * @brief CLI Command (Forward declaration)
      *
-     *  @struct CLI_Command_Context_t
+     * @struct CLI_Command_t
      */
-    typedef struct CLI_Command_Context CLI_Command_Context_t;
+    typedef struct CLI_Command CLI_Command_t;
 
     /**
      *  @brief CLI Command
@@ -126,7 +128,9 @@ extern "C"
         CLI_Status_t ( *Execute )( int argc, char ** argv );
 
         // Managed Internally
-        CLI_Command_Context_t * Context;
+        CLI_Command_t * Parent;
+        LIST_Node_t Node;
+        LIST_t SubCommands;
     } CLI_Command_t;
 
     /**
@@ -175,10 +179,11 @@ extern "C"
     /**
      *  @brief Add command to command line interface
      *
-     *  @param[in]     CLIx        Interface
-     *  @param[in,out] Command     Command
-     *                             Could be either NULL or an existing command
-     *  @param[in]     Command_Sub Sub-Command to be added to the main command
+     *  @warning Adding SAME command more than ONCE or to multiple CLIs IS NOT supported
+     *
+     *  @param[in] CLIx        Interface
+     *  @param[in] Command     Command, NULL for root
+     *  @param[in] Command_Sub Sub-Command to be added to Command
      *
      *  @return CLI_Status_t
      */
@@ -198,7 +203,7 @@ extern "C"
      *  @brief List commands exists in command line interface
      *
      *  @param[in] CLIx     Interface
-     *  @param[in] Command  Command instance to start from
+     *  @param[in] Command  Start from Command, NULL for root
      *
      *  @return CLI_Status_t
      */
@@ -208,8 +213,8 @@ extern "C"
      *  @brief Write data to command line interface
      *
      *  @param[in] CLIx       Interface
-     *  @param[in] Data       Data to be written
-     *  @param[in] DataLength Data length
+     *  @param[in] Data       Data
+     *  @param[in] DataLength Length
      *
      *  @return CLI_Status_t
      */

@@ -48,9 +48,7 @@ extern "C"
     // #### Include(s) #############################################################
     // #############################################################################
 
-    #include "CLI_Port.h"
-
-    #include <stdint.h>
+    #include "CLI.h"
 
     // #############################################################################
     // #### Public Macro(s) ########################################################
@@ -89,16 +87,34 @@ extern "C"
     // #### Public Type(s) #########################################################
     // #############################################################################
 
-    typedef struct CLI_InstanceContext CLI_InstanceContext_t;
+    typedef enum CLI_Type
+    {
+        CLI_Type_Unknown = 0,
+        CLI_Type_Null,
+        CLI_Type_UART,
+        CLI_Type_USB,
+    } CLI_Type_t;
 
     typedef struct CLI_Instance
     {
-        CLI_t CLIx;
+        CLI_Type_t Type;
 
         union
         {
-            CLI_InstanceContext_t * Context;
+            UART_t UARTx;
+
+            struct
+            {
+                USB_t Instance;
+                USB_Interface_t Interface;
+            } USBx;
         };
+
+        LIST_t Commands;
+        LIST_Node_t * Active;
+
+        BUFFER_t Transmit;
+        BUFFER_t Receive;
     } CLI_Instance_t;
 
     // #############################################################################
@@ -106,18 +122,16 @@ extern "C"
     // #############################################################################
 
     // The following APIs MUST be provided by the port
-    CLI_Status_t CLI_IsValid( CLI_t CLI );
+    CLI_Status_t CLI_Port_Initialize( CLI_t CLIx );
+    CLI_Status_t CLI_Port_Cycle( CLI_t CLIx );
+    CLI_Status_t CLI_Port_DeInitialize( CLI_t CLIx );
 
-    CLI_Status_t CLI_Instance_Initialize( CLI_Instance_t * Instance );
-    CLI_Status_t CLI_Instance_Cycle( CLI_Instance_t * Instance );
-    CLI_Status_t CLI_Instance_DeInitialize( CLI_Instance_t * Instance );
+    CLI_Status_t CLI_Port_Add( CLI_t CLIx, CLI_Command_t * Command, CLI_Command_t * SubCommand );
+    CLI_Status_t CLI_Port_Remove( CLI_t CLIx, CLI_Command_t * Command );
+    CLI_Status_t CLI_Port_List( CLI_t CLIx, CLI_Command_t * Command );
 
-    CLI_Status_t CLI_Instance_Add( CLI_Instance_t * Instance, CLI_Command_t * Command_Root, CLI_Command_t * Command_Child );
-    CLI_Status_t CLI_Instance_Remove( CLI_Instance_t * Instance, CLI_Command_t * Command );
-    CLI_Status_t CLI_Instance_List( CLI_Instance_t * Instance, CLI_Command_t * Command );
-
-    CLI_Status_t CLI_Instance_Read( CLI_Instance_t * Instance );
-    CLI_Status_t CLI_Instance_Write( CLI_Instance_t * Instance, CLI_Data_t * Data, CLI_DataLength_t DataLength );
+    CLI_Status_t CLI_Port_Read( CLI_t CLIx );
+    CLI_Status_t CLI_Port_Write( CLI_t CLIx, CLI_Data_t * Data, CLI_DataLength_t DataLength );
 
     // #############################################################################
     // #### Public Variable(s) #####################################################

@@ -61,7 +61,6 @@
 
 typedef struct CLI_Context
 {
-    CLI_Instance_t Instance[ CLI_Count ];
 } CLI_Context_t;
 
 // #############################################################################
@@ -90,10 +89,7 @@ static CLI_Status_t CLI_Context_Initialize( void )
     {
         CLI_Trace( "%s( void )", __FUNCTION__ );
 
-        for ( CLI_t CLI_x = CLI_1; CLI_x < CLI_Count; ++CLI_x )
-        {
-            CLI_Context.Instance[ CLI_x ].CLIx = CLI_x;
-        }
+        UTIL_UNUSED( CLI_Context );
     }
     while ( 0 );
 
@@ -107,6 +103,8 @@ static CLI_Status_t CLI_Context_Cycle( void )
     do
     {
         CLI_Trace( "%s( void )", __FUNCTION__ );
+
+        UTIL_UNUSED( CLI_Context );
     }
     while ( 0 );
 
@@ -120,6 +118,8 @@ static CLI_Status_t CLI_Context_DeInitialize( void )
     do
     {
         CLI_Trace( "%s( void )", __FUNCTION__ );
+
+        UTIL_UNUSED( CLI_Context );
     }
     while ( 0 );
 
@@ -139,11 +139,6 @@ CLI_Status_t CLI_Initialize( CLI_t CLIx )
     {
         CLI_Trace( "%s( CLIx=%d )", __FUNCTION__, CLIx );
 
-        if ( ( Status = CLI_IsValid( CLIx ) ) != CLI_Status_Success )
-        {
-            break;
-        }
-
         if ( ( Status = CLI_Context_Initialize( ) ) != CLI_Status_Success )
         {
             break;
@@ -156,7 +151,7 @@ CLI_Status_t CLI_Initialize( CLI_t CLIx )
                 continue;
             }
 
-            if ( ( CLI_Status = CLI_Instance_Initialize( &CLI_Context.Instance[ CLI_x ] ) ) != CLI_Status_Success )
+            if ( ( CLI_Status = CLI_Port_Initialize( CLI_x ) ) != CLI_Status_Success )
             {
                 Status = CLI_Status;
             }
@@ -176,11 +171,6 @@ CLI_Status_t CLI_Cycle( CLI_t CLIx )
     {
         CLI_Trace( "%s( CLIx=%d )", __FUNCTION__, CLIx );
 
-        if ( ( Status = CLI_IsValid( CLIx ) ) != CLI_Status_Success )
-        {
-            break;
-        }
-
         if ( ( Status = CLI_Context_Cycle( ) ) != CLI_Status_Success )
         {
             break;
@@ -193,7 +183,7 @@ CLI_Status_t CLI_Cycle( CLI_t CLIx )
                 continue;
             }
 
-            if ( ( CLI_Status = CLI_Instance_Cycle( &CLI_Context.Instance[ CLI_x ] ) ) != CLI_Status_Success )
+            if ( ( CLI_Status = CLI_Port_Cycle( CLI_x ) ) != CLI_Status_Success )
             {
                 Status = CLI_Status;
             }
@@ -213,11 +203,6 @@ CLI_Status_t CLI_DeInitialize( CLI_t CLIx )
     {
         CLI_Trace( "%s( CLIx=%d )", __FUNCTION__, CLIx );
 
-        if ( ( Status = CLI_IsValid( CLIx ) ) != CLI_Status_Success )
-        {
-            break;
-        }
-
         for ( CLI_t CLI_x = CLI_Null; CLI_x < CLI_Count; ++CLI_x )
         {
             if ( CLIx != CLI_All && CLIx != CLI_x )
@@ -225,7 +210,7 @@ CLI_Status_t CLI_DeInitialize( CLI_t CLIx )
                 continue;
             }
 
-            if ( ( CLI_Status = CLI_Instance_DeInitialize( &CLI_Context.Instance[ CLI_x ] ) ) != CLI_Status_Success )
+            if ( ( CLI_Status = CLI_Port_DeInitialize( CLI_x ) ) != CLI_Status_Success )
             {
                 Status = CLI_Status;
             }
@@ -247,7 +232,7 @@ CLI_Status_t CLI_Add( CLI_t CLIx, CLI_Command_t * Command, CLI_Command_t * Comma
 
     do
     {
-        CLI_Trace( "%s( CLIx=%d, Root=%p, Child=%p )", __FUNCTION__, CLIx, Command, Command_Sub );
+        CLI_Trace( "%s( CLIx=%d, Command=%p, SubCommand=%p )", __FUNCTION__, CLIx, Command, Command_Sub );
 
         if ( Command_Sub == NULL )
         {
@@ -255,12 +240,7 @@ CLI_Status_t CLI_Add( CLI_t CLIx, CLI_Command_t * Command, CLI_Command_t * Comma
             break;
         }
 
-        if ( ( Status = CLI_IsValid( CLIx ) ) != CLI_Status_Success )
-        {
-            break;
-        }
-
-        Status = CLI_Instance_Add( &CLI_Context.Instance[ CLIx ], Command, Command_Sub );
+        Status = CLI_Port_Add( CLIx, Command, Command_Sub );
     }
     while ( 0 );
 
@@ -281,12 +261,7 @@ CLI_Status_t CLI_Remove( CLI_t CLIx, CLI_Command_t * Command )
             break;
         }
 
-        if ( ( Status = CLI_IsValid( CLIx ) ) != CLI_Status_Success )
-        {
-            break;
-        }
-
-        Status = CLI_Instance_Remove( &CLI_Context.Instance[ CLIx ], Command );
+        Status = CLI_Port_Remove( CLIx, Command );
     }
     while ( 0 );
 
@@ -301,12 +276,7 @@ CLI_Status_t CLI_List( CLI_t CLIx, CLI_Command_t * Command )
     {
         CLI_Trace( "%s( CLIx=%d, Command=%p )", __FUNCTION__, CLIx, Command );
 
-        if ( ( Status = CLI_IsValid( CLIx ) ) != CLI_Status_Success )
-        {
-            break;
-        }
-
-        Status = CLI_Instance_List( &CLI_Context.Instance[ CLIx ], Command );
+        Status = CLI_Port_List( CLIx, Command );
     }
     while ( 0 );
 
@@ -327,12 +297,7 @@ CLI_Status_t CLI_Write( CLI_t CLIx, CLI_Data_t * Data, CLI_DataLength_t DataLeng
             break;
         }
 
-        if ( ( Status = CLI_IsValid( CLIx ) ) != CLI_Status_Success )
-        {
-            break;
-        }
-
-        Status = CLI_Instance_Write( &CLI_Context.Instance[ CLIx ], Data, DataLength );
+        Status = CLI_Port_Write( CLIx, Data, DataLength );
     }
     while ( 0 );
 
@@ -343,7 +308,7 @@ CLI_Status_t CLI_Write( CLI_t CLIx, CLI_Data_t * Data, CLI_DataLength_t DataLeng
 // #### Public Variable(s) #####################################################
 // #############################################################################
 
-const char CLI_VERSION[] = "0.0.0.v20260412-1852";
+const char CLI_VERSION[] = "0.0.0.v20260526-1252";
 
 // #############################################################################
 // #### File Guard #############################################################
