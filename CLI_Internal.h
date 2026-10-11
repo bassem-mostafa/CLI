@@ -110,8 +110,8 @@ extern "C"
             } USBx;
         };
 
-        LIST_t Commands;
-        LIST_Node_t * Active;
+        CLI_Command_t Root;
+        CLI_Command_t * Active;
 
         BUFFER_t Transmit;
         BUFFER_t Receive;

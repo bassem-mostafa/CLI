@@ -59,72 +59,17 @@
 // #### Private Type(s) ########################################################
 // #############################################################################
 
-typedef struct CLI_Context
-{
-} CLI_Context_t;
-
 // #############################################################################
 // #### Private Method(s) Prototype ############################################
 // #############################################################################
-
-static CLI_Status_t CLI_Context_Initialize( void );
-static CLI_Status_t CLI_Context_Cycle( void );
-static CLI_Status_t CLI_Context_DeInitialize( void );
 
 // #############################################################################
 // #### Private Variable(s) ####################################################
 // #############################################################################
 
-static CLI_Context_t CLI_Context;
-
 // #############################################################################
 // #### Private Method(s) ######################################################
 // #############################################################################
-
-static CLI_Status_t CLI_Context_Initialize( void )
-{
-    CLI_Status_t Status = CLI_Status_Success;
-
-    do
-    {
-        CLI_Trace( "%s( void )", __FUNCTION__ );
-
-        UTIL_UNUSED( CLI_Context );
-    }
-    while ( 0 );
-
-    return Status;
-}
-
-static CLI_Status_t CLI_Context_Cycle( void )
-{
-    CLI_Status_t Status = CLI_Status_Success;
-
-    do
-    {
-        CLI_Trace( "%s( void )", __FUNCTION__ );
-
-        UTIL_UNUSED( CLI_Context );
-    }
-    while ( 0 );
-
-    return Status;
-}
-
-static CLI_Status_t CLI_Context_DeInitialize( void )
-{
-    CLI_Status_t Status = CLI_Status_Success;
-
-    do
-    {
-        CLI_Trace( "%s( void )", __FUNCTION__ );
-
-        UTIL_UNUSED( CLI_Context );
-    }
-    while ( 0 );
-
-    return Status;
-}
 
 // #############################################################################
 // #### Public Method(s) #######################################################
@@ -133,28 +78,14 @@ static CLI_Status_t CLI_Context_DeInitialize( void )
 CLI_Status_t CLI_Initialize( CLI_t CLIx )
 {
     CLI_Status_t Status = CLI_Status_Success;
-    CLI_Status_t CLI_Status = CLI_Status_Success;
 
     do
     {
         CLI_Trace( "%s( CLIx=%d )", __FUNCTION__, CLIx );
 
-        if ( ( Status = CLI_Context_Initialize( ) ) != CLI_Status_Success )
+        if ( ( Status = CLI_Port_Initialize( CLIx ) ) != CLI_Status_Success )
         {
             break;
-        }
-
-        for ( CLI_t CLI_x = CLI_Null; CLI_x < CLI_Count; ++CLI_x )
-        {
-            if ( CLIx != CLI_All && CLIx != CLI_x )
-            {
-                continue;
-            }
-
-            if ( ( CLI_Status = CLI_Port_Initialize( CLI_x ) ) != CLI_Status_Success )
-            {
-                Status = CLI_Status;
-            }
         }
     }
     while ( 0 );
@@ -165,28 +96,14 @@ CLI_Status_t CLI_Initialize( CLI_t CLIx )
 CLI_Status_t CLI_Cycle( CLI_t CLIx )
 {
     CLI_Status_t Status = CLI_Status_Success;
-    CLI_Status_t CLI_Status = CLI_Status_Success;
 
     do
     {
         CLI_Trace( "%s( CLIx=%d )", __FUNCTION__, CLIx );
 
-        if ( ( Status = CLI_Context_Cycle( ) ) != CLI_Status_Success )
+        if ( ( Status = CLI_Port_Cycle( CLIx ) ) != CLI_Status_Success )
         {
             break;
-        }
-
-        for ( CLI_t CLI_x = CLI_Null; CLI_x < CLI_Count; ++CLI_x )
-        {
-            if ( CLIx != CLI_All && CLIx != CLI_x )
-            {
-                continue;
-            }
-
-            if ( ( CLI_Status = CLI_Port_Cycle( CLI_x ) ) != CLI_Status_Success )
-            {
-                Status = CLI_Status;
-            }
         }
     }
     while ( 0 );
@@ -197,26 +114,12 @@ CLI_Status_t CLI_Cycle( CLI_t CLIx )
 CLI_Status_t CLI_DeInitialize( CLI_t CLIx )
 {
     CLI_Status_t Status = CLI_Status_Success;
-    CLI_Status_t CLI_Status = CLI_Status_Success;
 
     do
     {
         CLI_Trace( "%s( CLIx=%d )", __FUNCTION__, CLIx );
 
-        for ( CLI_t CLI_x = CLI_Null; CLI_x < CLI_Count; ++CLI_x )
-        {
-            if ( CLIx != CLI_All && CLIx != CLI_x )
-            {
-                continue;
-            }
-
-            if ( ( CLI_Status = CLI_Port_DeInitialize( CLI_x ) ) != CLI_Status_Success )
-            {
-                Status = CLI_Status;
-            }
-        }
-
-        if ( ( Status = CLI_Context_DeInitialize( ) ) != CLI_Status_Success )
+        if ( ( Status = CLI_Port_DeInitialize( CLIx ) ) != CLI_Status_Success )
         {
             break;
         }
@@ -240,7 +143,10 @@ CLI_Status_t CLI_Add( CLI_t CLIx, CLI_Command_t * Command, CLI_Command_t * Comma
             break;
         }
 
-        Status = CLI_Port_Add( CLIx, Command, Command_Sub );
+        if ( ( Status = CLI_Port_Add( CLIx, Command, Command_Sub ) ) != CLI_Status_Success )
+        {
+            break;
+        }
     }
     while ( 0 );
 
@@ -261,7 +167,10 @@ CLI_Status_t CLI_Remove( CLI_t CLIx, CLI_Command_t * Command )
             break;
         }
 
-        Status = CLI_Port_Remove( CLIx, Command );
+        if ( ( Status = CLI_Port_Remove( CLIx, Command ) ) != CLI_Status_Success )
+        {
+            break;
+        }
     }
     while ( 0 );
 
@@ -276,7 +185,10 @@ CLI_Status_t CLI_List( CLI_t CLIx, CLI_Command_t * Command )
     {
         CLI_Trace( "%s( CLIx=%d, Command=%p )", __FUNCTION__, CLIx, Command );
 
-        Status = CLI_Port_List( CLIx, Command );
+        if ( ( Status = CLI_Port_List( CLIx, Command ) ) != CLI_Status_Success )
+        {
+            break;
+        }
     }
     while ( 0 );
 
@@ -297,7 +209,10 @@ CLI_Status_t CLI_Write( CLI_t CLIx, CLI_Data_t * Data, CLI_DataLength_t DataLeng
             break;
         }
 
-        Status = CLI_Port_Write( CLIx, Data, DataLength );
+        if ( ( Status = CLI_Port_Write( CLIx, Data, DataLength ) ) != CLI_Status_Success )
+        {
+            break;
+        }
     }
     while ( 0 );
 
@@ -308,7 +223,7 @@ CLI_Status_t CLI_Write( CLI_t CLIx, CLI_Data_t * Data, CLI_DataLength_t DataLeng
 // #### Public Variable(s) #####################################################
 // #############################################################################
 
-const char CLI_VERSION[] = "0.0.0.v20260913-1832";
+const char CLI_VERSION[] = "0.0.0.v20261011-2228";
 
 // #############################################################################
 // #### File Guard #############################################################
